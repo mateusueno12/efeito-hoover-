@@ -1,131 +1,270 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Retângulos 3D Centralizados</title>
-<style>
-corpo {
-margem: 0;
-altura: 100vh;
-Exibir: flexível;
-justificar-conteúdo: centralizado;
-alinhamento-itens: centro;
-background-color: #4b0082; /* Roxo */
-família de fontes: 'Segoe UI', sem serifa;
-overflow: oculto;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Retângulos 3D Centralizados | Efeito de Abertura</title>
+  <style>
+    /* Reset e configurações globais - corrigindo propriedades em português */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* Bola Amarela */
-.circle-container {
-largura: 480px;
-altura: 480px;
-fundo: #ffcc00;
-raio-da-borda: 50%;
-Exibir: flexível;
-justificar-conteúdo: centro; /* Centralização horizontal */
-alinhar itens: centro; /* Centralização vertical */
-posição: relativa;
-box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4);
-cursor: ponteiro;
-perspectiva: 2000px;
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at 30% 10%, #5a189a, #240046);
+      font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, 'Inter', sans-serif;
+      overflow: hidden;
+      cursor: default;
+    }
 
-/* Container da Pilha (sem tamanho para não deslocar o centro) */
-.stack-wrapper {
-posição: relativa;
-Exibir: flexível;
-justificar-conteúdo: centralizado;
-alinhamento-itens: centro;
-}
+    /* Círculo dourado / bola amarela com brilho suave */
+    .circle-container {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle at 35% 30%, #ffe066, #ffb347);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 35px 65px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 200, 0.8);
+      cursor: pointer;
+      perspective: 2200px;
+      transition: box-shadow 0.3s ease;
+    }
 
-/* Transformação em RETÂNGULOS (mais altos e estreitos) */
-.folha {
-posição: absoluta;
-largura: 130px; /* Largura menor */
-altura: 250px; /* Altura maior para formato retangular */
-raio da borda: 6px;
-Exibir: flexível;
-flex-direction: coluna;
-justificar-conteúdo: centralizado;
-alinhamento-itens: centro;
-transição: todos 0,7s cubic-bezier(0,25, 1, 0,5, 1);
-borda: 1px sólida rgba(255, 255, 255, 0.4);
-box-shadow: -8px 8px 20px rgba(0,0,0,0.15);
-origem da transformação: centro centro; /* Rotação pelo centro para melhor equilíbrio */
-}
+    .circle-container:hover {
+      box-shadow: 0 45px 85px rgba(0, 0, 0, 0.6);
+    }
 
-/* Estado Inicial: Retângulos Inclinados para a Direita */
-.sheet:nth-child(1) {
-fundo: rgba(255, 255, 255, 1);
-Índice z: 3;
-transformar: rotacionarX(50deg) rotacionarY(20deg) rotacionarZ(15deg) transladarZ(30px);
-}
-.sheet:nth-child(2) {
-fundo: rgba(255, 255, 255, 0.6);
-filtro de fundo: desfoque(4px);
-Índice z: 2;
-transformar: rotacionarX(50deg) rotacionarY(20deg) rotacionarZ(15deg) traduzirZ(10px) traduzir(-10px, 10px);
-}
-.sheet:nth-child(3) {
-fundo: rgba(255, 255, 255, 0.2);
-filtro de fundo: desfoque(8px);
-Índice z: 1;
-transformar: rotacionarX(50deg) rotacionarY(20deg) rotacionarZ(15deg) traduzir(-20px, 20px);
-}
+    /* Wrapper da pilha - mantém os cards centralizados dentro do círculo */
+    .stack-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* para que o hover funcione através do wrapper */
+    }
 
-/* Texto escondido */
-.sheet span, .sheet p {
-opacidade: 0;
-cor: #4b0082;
-peso da fonte: negrito;
-margem: 10px 0;
-transição: opacidade 0,4s;
-alinhamento do texto: centralizado;
-}
+    /* RETÂNGULOS (cards) - Formato mais elegante, proporção 130x250 */
+    .sheet {
+      position: absolute;
+      width: 140px;          /* leve ajuste para melhor legibilidade */
+      height: 260px;         /* retângulo vertical elegante */
+      border-radius: 18px;   /* bordas mais suaves e modernas */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+      border: 1px solid rgba(255, 255, 245, 0.5);
+      backdrop-filter: blur(2px);
+      box-shadow: -12px 18px 28px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,240,0.8);
+      transform-origin: center center;
+      will-change: transform, opacity, filter;
+      pointer-events: auto;
+      background: rgba(255, 255, 250, 0.98);
+    }
 
-/* --- Hover: Efeito de Abertura --- */
+    /* Texto interno - invisível inicialmente */
+    .sheet span,
+    .sheet p {
+      opacity: 0;
+      color: #2e1a47;
+      font-weight: 600;
+      margin: 8px 0;
+      transition: opacity 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      text-align: center;
+      letter-spacing: -0.3px;
+    }
 
-.circle-container:hover .sheet {
-fundo: rgba(255, 255, 255, 1);
-box-shadow: 0 20px 45px rgba(0,0,0,0.3);
-transformar: girarX (0 graus) girar Y (0 graus) girar Z (0 graus); /* Ficam retos */
-}
+    .sheet span {
+      font-size: 3.3rem;
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+    }
 
-/* Espaçamento entre os retângulos ao abrir */
-.circle-container:hover .sheet:nth-child(1) { transform: translateX(-170px) scale(1.1); }
-.circle-container:hover .sheet:nth-child(2) { transform: translateY(-15px) scale(1.2); z-index: 10; }
-.circle-container:hover .sheet:nth-child(3) { transform: translateX(170px) scale(1.1); }
+    .sheet p {
+      font-size: 1rem;
+      background: rgba(75, 0, 130, 0.08);
+      padding: 6px 12px;
+      border-radius: 40px;
+      backdrop-filter: blur(2px);
+    }
 
-.circle-container:hover .sheet span,
-.circle-container:hover .sheet p {
-opacidade: 1;
-}
+    /* --- ESTADO INICIAL: Retângulos empilhados e inclinados (3D dramático) --- */
+    /* Camada frontal (card principal) */
+    .sheet:nth-child(1) {
+      background: linear-gradient(145deg, #fffef7, #fff5e6);
+      z-index: 3;
+      transform: rotateX(48deg) rotateY(22deg) rotateZ(14deg) translateZ(32px);
+      box-shadow: -15px 20px 30px rgba(0, 0, 0, 0.3);
+    }
 
-.sheet span { tamanho da fonte: 3rem; }
-</style>
+    /* Camada do meio - semi transparente e deslocada */
+    .sheet:nth-child(2) {
+      background: rgba(255, 248, 235, 0.85);
+      backdrop-filter: blur(5px);
+      z-index: 2;
+      transform: rotateX(48deg) rotateY(22deg) rotateZ(14deg) translateZ(10px) translateX(-12px) translateY(12px);
+      box-shadow: -10px 15px 22px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Camada de trás - mais distante e esfumada */
+    .sheet:nth-child(3) {
+      background: rgba(245, 240, 225, 0.65);
+      backdrop-filter: blur(9px);
+      z-index: 1;
+      transform: rotateX(48deg) rotateY(22deg) rotateZ(14deg) translateX(-24px) translateY(24px);
+      box-shadow: -6px 12px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ========== EFEITO HOVER: ABERTURA COM ESPAÇAMENTO DINÂMICO ========== */
+    .circle-container:hover .sheet {
+      background: linear-gradient(125deg, #ffffff, #fff7ed);
+      backdrop-filter: blur(0px);
+      border: 1px solid rgba(255, 220, 150, 0.8);
+    }
+
+    /* Card 1 (esquerda) - translada para esquerda com leve rotação extra e escala */
+    .circle-container:hover .sheet:nth-child(1) {
+      transform: translateX(-190px) translateY(-8px) rotateY(-6deg) rotateX(4deg) scale(1.08);
+      box-shadow: 0 30px 40px rgba(0, 0, 0, 0.25);
+      z-index: 12;
+    }
+
+    /* Card 2 (central / destaque) - sobe ligeiramente, escala maior, mais proeminente */
+    .circle-container:hover .sheet:nth-child(2) {
+      transform: translateY(-38px) scale(1.22) rotateX(2deg);
+      z-index: 15;
+      box-shadow: 0 35px 55px rgba(0, 0, 0, 0.3);
+      background: #ffffff;
+    }
+
+    /* Card 3 (direita) - translada para direita com rotação sutil */
+    .circle-container:hover .sheet:nth-child(3) {
+      transform: translateX(185px) translateY(-5px) rotateY(5deg) rotateX(3deg) scale(1.07);
+      z-index: 11;
+      box-shadow: 0 28px 38px rgba(0, 0, 0, 0.22);
+    }
+
+    /* Revelação dos textos ao hover */
+    .circle-container:hover .sheet span,
+    .circle-container:hover .sheet p {
+      opacity: 1;
+      transition-delay: 0.1s;
+    }
+
+    /* Ajustes específicos para o texto do card central aparecer mais suave */
+    .circle-container:hover .sheet:nth-child(2) p {
+      background: rgba(75, 0, 130, 0.12);
+      transform: scale(1.02);
+    }
+
+    /* Efeito adicional de brilho nos cards ao hover */
+    .circle-container:hover .sheet {
+      transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.4, 1.2), background 0.3s, box-shadow 0.4s;
+    }
+
+    /* Pequeno efeito de pulsação no círculo para interação */
+    .circle-container {
+      transition: transform 0.2s ease;
+    }
+
+    .circle-container:active {
+      transform: scale(0.98);
+    }
+
+    /* Responsivo: ajustar espaçamento para telas menores (mantendo centralização) */
+    @media (max-width: 650px) {
+      .circle-container {
+        width: 440px;
+        height: 440px;
+      }
+      .sheet {
+        width: 120px;
+        height: 230px;
+      }
+      .circle-container:hover .sheet:nth-child(1) {
+        transform: translateX(-150px) translateY(-5px) scale(1.05);
+      }
+      .circle-container:hover .sheet:nth-child(2) {
+        transform: translateY(-32px) scale(1.18);
+      }
+      .circle-container:hover .sheet:nth-child(3) {
+        transform: translateX(148px) translateY(-4px) scale(1.05);
+      }
+      .sheet span {
+        font-size: 2.6rem;
+      }
+      .sheet p {
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .circle-container {
+        width: 380px;
+        height: 380px;
+      }
+      .sheet {
+        width: 105px;
+        height: 200px;
+      }
+      .circle-container:hover .sheet:nth-child(1) {
+        transform: translateX(-125px) scale(1.04);
+      }
+      .circle-container:hover .sheet:nth-child(2) {
+        transform: translateY(-28px) scale(1.16);
+      }
+      .circle-container:hover .sheet:nth-child(3) {
+        transform: translateX(122px) scale(1.04);
+      }
+      .sheet span {
+        font-size: 2.2rem;
+      }
+    }
+
+    /* Melhor acessibilidade: indicador de clique */
+    .circle-container {
+      transition: box-shadow 0.2s;
+    }
+
+    /* Suavidade extra para dispositivos que suportam */
+    @media (prefers-reduced-motion: no-preference) {
+      .sheet {
+        transition: transform 0.6s cubic-bezier(0.22, 0.97, 0.36, 1), opacity 0.4s, background 0.3s;
+      }
+    }
+  </style>
 </head>
 <body>
-
-<div class="circle-container">
-<div class="stack-wrapper">
-<div class="sheet">
-<span>🗂️</span>
-<p>Flashcards</p>
-</div>
-
-<div class="sheet">
-<span>📝</span>
-<p>Anotações</p>
-</div>
-
-<div class="sheet">
-<span>📖</span>
-<p>Resumo</p>
-</div>
-
-</div>
-</div>
-
+  <div class="circle-container">
+    <div class="stack-wrapper">
+      <!-- Card 1: Flashcards -->
+      <div class="sheet">
+        <span>🗂️</span>
+        <p>Flashcards</p>
+      </div>
+      <!-- Card 2: Anotações (central em destaque) -->
+      <div class="sheet">
+        <span>📝</span>
+        <p>Anotações</p>
+      </div>
+      <!-- Card 3: Resumo -->
+      <div class="sheet">
+        <span>📖</span>
+        <p>Resumo</p>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
