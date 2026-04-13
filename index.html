@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retângulos 3D Centralizados</title>
+<style>
+corpo {
+margem: 0;
+altura: 100vh;
+Exibir: flexível;
+justificar-conteúdo: centralizado;
+alinhamento-itens: centro;
+background-color: #4b0082; /* Roxo */
+família de fontes: 'Segoe UI', sem serifa;
+overflow: oculto;
+}
+
+/* Bola Amarela */
+.circle-container {
+largura: 480px;
+altura: 480px;
+fundo: #ffcc00;
+raio-da-borda: 50%;
+Exibir: flexível;
+justificar-conteúdo: centro; /* Centralização horizontal */
+alinhar itens: centro; /* Centralização vertical */
+posição: relativa;
+box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4);
+cursor: ponteiro;
+perspectiva: 2000px;
+}
+
+/* Container da Pilha (sem tamanho para não deslocar o centro) */
+.stack-wrapper {
+posição: relativa;
+Exibir: flexível;
+justificar-conteúdo: centralizado;
+alinhamento-itens: centro;
+}
+
+/* Transformação em RETÂNGULOS (mais altos e estreitos) */
+.folha {
+posição: absoluta;
+largura: 130px; /* Largura menor */
+altura: 250px; /* Altura maior para formato retangular */
+raio da borda: 6px;
+Exibir: flexível;
+flex-direction: coluna;
+justificar-conteúdo: centralizado;
+alinhamento-itens: centro;
+transição: todos 0,7s cubic-bezier(0,25, 1, 0,5, 1);
+borda: 1px sólida rgba(255, 255, 255, 0.4);
+box-shadow: -8px 8px 20px rgba(0,0,0,0.15);
+origem da transformação: centro centro; /* Rotação pelo centro para melhor equilíbrio */
+}
+
+/* Estado Inicial: Retângulos Inclinados para a Direita */
+.sheet:nth-child(1) {
+fundo: rgba(255, 255, 255, 1);
+Índice z: 3;
+transformar: rotacionarX(50deg) rotacionarY(20deg) rotacionarZ(15deg) transladarZ(30px);
+}
+.sheet:nth-child(2) {
+fundo: rgba(255, 255, 255, 0.6);
+filtro de fundo: desfoque(4px);
+Índice z: 2;
+transformar: rotacionarX(50deg) rotacionarY(20deg) rotacionarZ(15deg) traduzirZ(10px) traduzir(-10px, 10px);
+}
+.sheet:nth-child(3) {
+fundo: rgba(255, 255, 255, 0.2);
+filtro de fundo: desfoque(8px);
+Índice z: 1;
+transformar: rotacionarX(50deg) rotacionarY(20deg) rotacionarZ(15deg) traduzir(-20px, 20px);
+}
+
+/* Texto escondido */
+.sheet span, .sheet p {
+opacidade: 0;
+cor: #4b0082;
+peso da fonte: negrito;
+margem: 10px 0;
+transição: opacidade 0,4s;
+alinhamento do texto: centralizado;
+}
+
+/* --- Hover: Efeito de Abertura --- */
+
+.circle-container:hover .sheet {
+fundo: rgba(255, 255, 255, 1);
+box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+transformar: girarX (0 graus) girar Y (0 graus) girar Z (0 graus); /* Ficam retos */
+}
+
+/* Espaçamento entre os retângulos ao abrir */
+.circle-container:hover .sheet:nth-child(1) { transform: translateX(-170px) scale(1.1); }
+.circle-container:hover .sheet:nth-child(2) { transform: translateY(-15px) scale(1.2); z-index: 10; }
+.circle-container:hover .sheet:nth-child(3) { transform: translateX(170px) scale(1.1); }
+
+.circle-container:hover .sheet span,
+.circle-container:hover .sheet p {
+opacidade: 1;
+}
+
+.sheet span { tamanho da fonte: 3rem; }
+</style>
+</head>
+<body>
